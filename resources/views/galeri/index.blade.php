@@ -3,51 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Kelas - SMKN 4 Kota Bogor</title>
+    <title>Kelola Galeri - SMKN 4 Kota Bogor</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     @vite(['resources/css/app.css'])
 
     <style>
-        body {
-            font-family: 'Google Sans', sans-serif;
-            background-color: #f8fafc;
-        }
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #0f172a;
-            z-index: 1000;
-        }
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-        }
-        .sidebar .nav-link {
-            color: #94a3b8;
-            padding: 0.8rem 1.2rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            color: #ffffff;
-            background-color: #1e293b;
-        }
-        .sidebar .nav-link i {
-            font-size: 1.2rem;
-            margin-right: 0.75rem;
-        }
+        body { font-family: 'Google Sans', sans-serif; background-color: #f8fafc; }
+        .sidebar { width: 260px; height: 100vh; position: fixed; top: 0; left: 0; background-color: #0f172a; z-index: 1000; }
+        .main-content { margin-left: 260px; padding: 2rem; }
+        .sidebar .nav-link { color: #94a3b8; padding: 0.8rem 1.2rem; border-radius: 0.5rem; font-weight: 500; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #ffffff; background-color: #1e293b; }
+        .sidebar .nav-link i { font-size: 1.2rem; margin-right: 0.75rem; }
         @media (max-width: 991.98px) {
             .sidebar { margin-left: -260px; transition: all 0.3s; }
             .main-content { margin-left: 0; }
@@ -59,7 +32,6 @@
 
     <!-- Sidebar Navigation -->
     <aside class="sidebar p-3 d-flex flex-column" id="sidebar">
-        <!-- Logo Header -->
         <div class="d-flex align-items-center gap-2 px-2 py-3 mb-3 border-bottom border-secondary border-opacity-25">
             <img src="{{ asset('images/logo-smkn4.svg') }}" alt="Logo SMKN 4" height="38">
             <span class="fw-bold text-white fs-6">ADMIN PANEL</span>
@@ -113,12 +85,10 @@
 
     <!-- Main Content Area -->
     <main class="main-content">
-        
-        <!-- Topbar Mobile Toggle & Title -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold text-dark mb-1">Pengelolaan Data Kelas</h3>
-                <p class="text-muted small mb-0">Atur daftar kelas dan akses manajemen murid di setiap kelas.</p>
+                <h3 class="fw-bold text-dark mb-1">Galeri Sekolah</h3>
+                <p class="text-muted small mb-0">Tambah dan hapus foto fasilitas/kegiatan tempat sekolah.</p>
             </div>
             <button class="btn btn-dark d-lg-none" onclick="document.getElementById('sidebar').classList.toggle('show')">
                 <i class="bi bi-list"></i>
@@ -126,59 +96,58 @@
         </div>
 
         <div class="row g-4">
-            <!-- Form Tambah Kelas -->
-            <div class="col-lg-4">
+            <!-- Form Upload Galeri (Sudah Diperbaiki Ke admin.galeri.store) -->
+            <div class="col-md-4">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle-fill text-primary me-2"></i>Tambah Kelas Baru</h5>
-                    <form action="{{ route('admin.kelas.store') }}" method="POST">
+                    <h5 class="fw-bold text-dark mb-3">Tambah Foto Tempat</h5>
+                    <form action="{{ route('admin.galeri.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold">Nama Kelas</label>
-                            <input type="text" name="nama_kelas" class="form-control" placeholder="Contoh: XII RPL 1" required>
+                            <label class="form-label small fw-semibold">Nama Tempat / Lokasi</label>
+                            <input type="text" name="nama_tempat" class="form-control" placeholder="Contoh: Lab Komputer 1" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 fw-semibold">
-                            <i class="bi bi-save-fill me-1"></i> Simpan Kelas
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Pilih Foto</label>
+                            <input type="file" name="foto" class="form-control" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning text-white w-100 fw-bold">
+                            <i class="bi bi-upload me-1"></i> Upload Galeri
                         </button>
                     </form>
                 </div>
             </div>
 
-            <!-- List Daftar Kelas -->
-            <div class="col-lg-8">
+            <!-- List Foto Galeri -->
+            <div class="col-md-8">
                 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-list-task text-primary me-2"></i>Daftar Kelas Terdaftar</h5>
-                    <div class="list-group list-group-flush">
-                        @forelse($kelases as $k)
-                        <div class="list-group-item d-flex justify-content-between align-items-center py-3 px-2 border-bottom">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-circle">
-                                    <i class="bi bi-door-open-fill fs-5"></i>
+                    <h5 class="fw-bold text-dark mb-3">Daftar Galeri Ter-upload</h5>
+                    <div class="row g-3">
+                        @forelse($galeris as $g)
+                        <div class="col-md-6">
+                            <div class="card border rounded-3 overflow-hidden h-100 shadow-sm">
+                                <img src="{{ asset('storage/' . $g->foto) }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ $g->nama_tempat }}">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <h6 class="fw-bold text-dark mb-0">{{ $g->nama_tempat }}</h6>
+                                    <!-- Form Hapus Galeri (Sudah Diperbaiki Ke admin.galeri.destroy) -->
+                                    <form action="{{ route('admin.galeri.destroy', $g->id) }}" method="POST">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-outline-danger btn-sm" onclick="return confirm('Hapus foto ini?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
-                                <span class="fw-bold text-dark">{{ $k->nama_kelas }}</span>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('admin.kelas.show', $k->id) }}" class="btn btn-info btn-sm text-white fw-semibold">
-                                    <i class="bi bi-people-fill me-1"></i> Kelola Murid
-                                </a>
-                                <form action="{{ route('admin.kelas.destroy', $k->id) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-outline-danger btn-sm" onclick="return confirm('Hapus kelas?')">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </form>
                             </div>
                         </div>
                         @empty
-                        <div class="text-center text-muted py-5">
-                            <i class="bi bi-door-closed fs-1 d-block mb-2 text-secondary opacity-50"></i>
-                            Belum ada data kelas yang ditambahkan.
+                        <div class="col-12 text-center text-muted py-4">
+                            <i class="bi bi-images fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                            Belum ada foto galeri yang diunggah.
                         </div>
                         @endforelse
                     </div>
                 </div>
             </div>
         </div>
-
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

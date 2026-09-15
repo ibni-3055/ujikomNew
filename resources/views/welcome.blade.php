@@ -81,7 +81,7 @@
 </nav>
 
         <!-- Teks Hero Tengah -->
-        <div class="container my-auto pt-5 text-center" style="transform: translateY(20px);">
+        <div class="container my-auto pt-5 text-center" style="transform: translateY(10px);">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <p class="fs-3 fw-light mb-2 text-white">Selamat Datang di Website</p>

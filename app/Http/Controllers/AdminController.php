@@ -18,13 +18,16 @@ class AdminController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
 
+        // Generate email unik otomatis di sistem agar database tidak error
+        $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $request->name));
+        $emailOtomatis = $cleanName . time() . '@smkn4.sch.id';
+
         User::create([
             'name'     => $request->name,
-            'email'    => $request->email,
+            'email'    => $emailOtomatis,
             'password' => Hash::make($request->password),
         ]);
 
@@ -35,19 +38,20 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
+        // Hanya validasi nama, TIDAK butuh email
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'name' => 'required|string|max:255',
         ]);
 
         $data = [
-            'name'  => $request->name,
-            'email' => $request->email,
+            'name' => $request->name,
         ];
 
-        // Jika password diisi, update password baru
+        // Jika password diisi saat edit, update password baru
         if ($request->filled('password')) {
-            $request->validate(['password' => 'min:8']);
+            $request->validate([
+                'password' => 'min:8',
+            ]);
             $data['password'] = Hash::make($request->password);
         }
 

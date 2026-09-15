@@ -45,14 +45,14 @@
                   @endif
 
                   <!-- Input Email -->
-                  <div class="form-outline mb-3">
-                    <label class="form-label fw-semibold" for="email">Alamat Email</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" 
-                      class="form-control form-control-lg @error('email') is-invalid @enderror" required autofocus />
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                  </div>
+                  <!-- Input Username / Name -->
+<div class="form-outline mb-3">
+  <label class="form-label fw-semibold" for="name">User Admin</label>
+  <input type="text" id="email" name="name" value="{{ old('name') }}" class="form-control form-control-lg" required autofocus />
+  @error('name')
+      <div class="invalid-feedback">{{ $message }}</div>
+  @enderror
+</div>
 
                   <!-- Input Password -->
                   <div class="form-outline mb-3">

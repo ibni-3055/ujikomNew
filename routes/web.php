@@ -10,6 +10,20 @@ use App\Models\Kelas;
 use App\Models\Berita;
 use App\Models\Galeri;
 
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // === BISA DIAKSES OLEH SEMUA ADMIN & SUPER ADMIN ===
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('berita', BeritaController::class);
+    Route::resource('galeri', GaleriController::class);
+    Route::resource('kelas', KelasController::class);
+    Route::resource('murid', MuridController::class);
+
+    // === HANYA BISA DIAKSES OLEH SUPER ADMIN ===
+    Route::middleware(['super_admin'])->group(function () {
+        Route::resource('users', AdminManagementController::class); // CRUD Kelola Admin
+    });
+});
+
 /*
 |--------------------------------------------------------------------------
 | 1. RUTE PUBLIK (Dapat Diakses Semua Pengunjung)

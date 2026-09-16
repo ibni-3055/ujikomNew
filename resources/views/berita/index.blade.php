@@ -73,7 +73,7 @@
             <img src="{{ asset('images/logo-smkn4.svg') }}" alt="Logo SMKN 4" height="40" class="rounded">
             <div>
                 <span class="fw-bold text-white fs-6 d-block leading-none">ADMIN PANEL</span>
-                <span class="text-muted small text-white" style="font-size: 0.7rem;">SMKN 4 KOTA BOGOR</span>
+                <span class="small text-white" style="font-size: 0.7rem;">SMKN 4 KOTA BOGOR</span>
             </div>
         </div>
 

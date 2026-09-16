@@ -103,27 +103,44 @@
                     <i class="bi bi-images"></i> Kelola Galeri
                 </a>
             </li>
-            <li class="nav-item mt-3">
-                <a href="{{ url('/') }}" target="_blank" class="nav-link d-flex align-items-center text-info bg-info bg-opacity-10">
-                    <i class="bi bi-box-arrow-up-right"></i> Lihat Web Publik
-                </a>
-            </li>
         </ul>
 
         <!-- Profile & Logout -->
-        <div class="pt-3 border-top border-slate-800">
-            <div class="d-flex align-items-center justify-content-between px-2 bg-slate-900 p-2 rounded-3">
-                <div class="text-white small">
-                    <div class="fw-bold text-truncate" style="max-width: 140px;">{{ Auth::user()->name ?? 'Administrator' }}</div>
+<div class="pt-3 border-top border-slate-800">
+    <div class="d-flex align-items-center justify-content-between px-2 bg-slate-900 p-2 rounded-3">
+        <div class="text-white small">
+            <div class="fw-bold text-truncate" style="max-width: 140px;">{{ Auth::user()->name ?? 'Administrator' }}</div>
+        </div>
+        <!-- Tombol pemicu modal konfirmasi -->
+        <button type="button" class="btn btn-outline-danger btn-sm border-0 rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#logoutModal" title="Keluar">
+            <i class="bi bi-box-arrow-right fs-6"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Logout -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="false" style="background: rgba(0, 0, 0, 0.6); z-index: 99999;">
+    <div class="modal-dialog modal-dialog-centered modal-sm" style="position: relative; z-index: 100000;">
+        <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden text-dark bg-white">
+            <div class="modal-body p-4 text-center">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-box-arrow-right fs-3"></i>
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-danger btn-sm border-0 rounded-circle p-2" title="Keluar">
-                        <i class="bi bi-box-arrow-right fs-6"></i>
-                    </button>
-                </form>
+                <h5 class="fw-bold text-dark mb-2">Konfirmasi Keluar</h5>
+                <p class="text-muted small mb-4">Apakah Anda yakin ingin keluar dari sistem ini?</p>
+                
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-light w-50 fw-semibold rounded-3 py-2" data-bs-dismiss="modal">Batal</button>
+                    
+                    <form method="POST" action="{{ route('logout') }}" class="w-50">
+                        @csrf
+                        <button type="submit" class="btn btn-danger w-100 fw-semibold rounded-3 py-2 shadow-sm">Ya, Keluar</button>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
+</div>
     </aside>
 
     <!-- Main Content -->
@@ -140,6 +157,13 @@
 
         @yield('content')
     </main>
+
+    <!-- Menu ini hanya akan muncul untuk Super Admin -->
+@if(auth()->user()->isSuperAdmin())
+    <a href="{{ route('admin.users.index') }}" class="nav-link">
+        <i class="bi bi-people-fill me-2"></i> Kelola Admin
+    </a>
+@endif
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

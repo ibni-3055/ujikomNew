@@ -73,7 +73,7 @@
             <img src="{{ asset('images/logo-smkn4.svg') }}" alt="Logo SMKN 4" height="40" class="rounded">
             <div>
                 <span class="fw-bold text-white fs-6 d-block leading-none">ADMIN PANEL</span>
-                <span class="text-muted small text-white" style="font-size: 0.7rem;">SMKN 4 KOTA BOGOR</span>
+                <span class="small text-white" style="font-size: 0.7rem;">SMKN 4 KOTA BOGOR</span>
             </div>
         </div>
 
@@ -200,12 +200,15 @@
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label small fw-bold text-secondary">Password (Minimal 8 Karakter)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0 text-muted rounded-start-3"><i class="bi bi-key"></i></span>
-                                    <input type="password" name="password" class="form-control bg-light border-start-0 rounded-end-3" placeholder="••••••••" required>
-                                </div>
-                            </div>
+    <label class="form-label small fw-bold text-secondary">Password (Minimal 8 Karakter)</label>
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0 text-muted rounded-start-3"><i class="bi bi-key"></i></span>
+        <input type="password" id="addPassword" name="password" class="form-control bg-light border-start-0 border-end-0" placeholder="••••••••" required>
+        <button class="btn btn-light border border-start-0 text-muted rounded-end-3" type="button" onclick="togglePassword('addPassword', this)">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+</div>
 
                             <button type="submit" class="btn btn-primary w-100 fw-bold py-2.5 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-check-circle me-1"></i> Simpan Admin Baru
@@ -285,9 +288,14 @@
                                                         <input type="text" name="name" class="form-control bg-light rounded-3" value="{{ $u->name }}" required>
                                                     </div>
                                                     <div class="mb-2">
-                                                        <label class="form-label small fw-semibold text-muted">Password Baru <small class="text-muted fw-normal">(Kosongkan jika tidak diubah)</small></label>
-                                                        <input type="password" name="password" class="form-control bg-light rounded-3" minlength="6" placeholder="Password baru...">
-                                                    </div>
+    <label class="form-label small fw-semibold text-muted">Password Baru <small class="text-muted fw-normal">(Kosongkan jika tidak diubah)</small></label>
+    <div class="input-group">
+        <input type="password" id="editPassword{{ $u->id }}" name="password" class="form-control bg-light rounded-start-3 border-end-0" minlength="6" placeholder="Password baru...">
+        <button class="btn btn-light border border-start-0 text-muted rounded-end-3" type="button" onclick="togglePassword('editPassword{{ $u->id }}', this)">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+</div>
                                                 </div>
                                                 <div class="modal-footer bg-light p-3 border-top-0">
                                                     <button type="button" class="btn btn-light rounded-3 fw-semibold" data-bs-dismiss="modal">Batal</button>
@@ -307,5 +315,21 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        }
+    }
+</script>
 </body>
 </html>

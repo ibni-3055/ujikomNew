@@ -15,17 +15,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
-        body {
-            font-family: 'Google Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #334155;
-        }
-        .article-content {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            white-space: pre-line;
-        }
-    </style>
+    body {
+        font-family: 'Google Sans', sans-serif;
+        background-color: #f8fafc;
+        color: #334155;
+    }
+
+    /* Mengatur jarak baris dan antar paragraf agar lebih rapat & rapi */
+    .article-content {
+        font-size: 1.05rem;
+        line-height: 1.6; /* Diturunkan dari 1.8 agar teks lebih rapat */
+        color: #334155;
+        white-space: pre-line;
+    }
+
+    /* Menjaga jarak antar paragraf tidak terlalu jauh */
+    .article-content p {
+        margin-bottom: 0.85rem; 
+    }
+</style>
 </head>
 <body>
 
@@ -59,23 +67,23 @@
                     </div>
 
                     <!-- Gambar Utama -->
-                    @php
-                        $fotoPath = $berita->foto ?? $berita->gambar ?? $berita->image ?? null;
-                    @endphp
-                    <div class="overflow-hidden rounded-4 shadow-sm mb-5" style="max-height: 450px;">
-                        @if($fotoPath)
-                            <img src="{{ asset('storage/' . $fotoPath) }}" alt="{{ $berita->judul }}" class="w-100 h-100" style="object-fit: cover;">
-                        @else
-                            <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="{{ $berita->judul }}" class="w-100 h-100" style="object-fit: cover;">
-                        @endif
-                    </div>
+@php
+    $fotoPath = $berita->foto ?? $berita->gambar ?? $berita->image ?? null;
+@endphp
+<div class="overflow-hidden rounded-4 shadow-sm mb-5 bg-light d-flex align-items-center justify-content-center">
+    @if($fotoPath)
+        <img src="{{ asset('storage/' . $fotoPath) }}" alt="{{ $berita->judul }}" class="img-fluid w-100 rounded-4" style="height: auto; max-height: 600px; object-fit: contain;">
+    @else
+        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="{{ $berita->judul }}" class="img-fluid w-100 rounded-4" style="height: auto; max-height: 600px; object-fit: contain;">
+    @endif
+</div>
 
                     <!-- Isi Berita -->
-                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
-                        <div class="article-content">
-                            {!! nl2br(e($berita->deskripsi ?? $berita->isi ?? $berita->ringkasan)) !!}
-                        </div>
-                    </div>
+<div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+    <div class="article-content">
+        {!! e($berita->deskripsi ?? $berita->isi ?? $berita->ringkasan) !!}
+    </div>
+</div>
 
                     <!-- Navigation Footer -->
                     <div class="d-flex justify-content-between align-items-center border-top pt-4">

@@ -8,15 +8,38 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     @vite(['resources/css/app.css'])
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Card Berita Styling Enhancement */
+        .news-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+        }
+        .news-card img {
+            transition: transform 0.5s ease;
+        }
+        .news-card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
-<body class="bg-light">
+<!-- Menggunakan Flexbox Layout untuk mengunci Sticky Footer -->
+<body class="d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3 fixed-top">
@@ -48,7 +71,7 @@
                 <div class="ms-auto">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ route('dashboard') }}" class="btn btn-purple border-0 fw-semibold">
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-purple border-0 fw-semibold">
                                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
                             </a>
                         @else
@@ -65,88 +88,79 @@
     <!-- Header Berita -->
     <section class="pt-5 mt-5 pb-4 bg-white border-bottom">
         <div class="container pt-4 text-center">
-            <h1 class="fw-bold text-uppercase" style="letter-spacing: 1px; color: #1e1b4b;">BERITA & INFORMASI SEKOLAH</h1>
-            <p class="text-muted col-md-8 mx-auto small">
+            <h1 class="fw-bold text-uppercase" style="letter-spacing: -0.5px; color: #0f172a;">BERITA & INFORMASI SEKOLAH</h1>
+            <p class="text-muted col-md-8 mx-auto small mb-0">
                 Informasi terbaru mengenai agenda kegiatan, kabar prestasi siswa, pengumuman resmi, dan seputar SMKN 4 Kota Bogor.
             </p>
         </div>
     </section>
 
-    <!-- Section Berita Sekolah -->
-<section id="Berita" class="py-5 bg-white">
-    <div class="container py-4">
-        
-        <!-- Judul Section -->
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-uppercase" style="font-family: 'Google Sans', sans-serif; font-weight: 500; color: #1e1b4b;">BERITA SEKOLAH</h2>
-            <p style="font-family: 'Google Sans', sans-serif; font-weight: 300;">
-                Dapatkan informasi terbaru seputar kegiatan, prestasi, dan pengumuman resmi dari SMK Negeri 4 Kota Bogor.
-            </p>
-        </div>
-
-        <!-- Grid Cards -->
-        <div class="row g-4 justify-content-center">
+    <!-- Section Berita Sekolah (flex-grow-1 memaksa isi konten mendorong footer ke bawah) -->
+    <section id="Berita" class="py-5 flex-grow-1">
+        <div class="container py-2">
             
-            @forelse ($beritas as $item)
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 p-3 bg-white">
-                        
-                        <!-- Area Gambar Berita -->
-                        <div class="overflow-hidden rounded-3 mb-3" style="height: 200px;">
-                            @php
-                                // Pengecekan field gambar/foto dari database
-                                $fotoPath = $item->foto ?? $item->gambar ?? $item->image ?? null;
-                            @endphp
-
-                            @if($fotoPath)
-                                <img src="{{ asset('storage/' . $fotoPath) }}" 
-                                     alt="{{ $item->judul }}" 
-                                     class="w-100 h-100" 
-                                     style="object-fit: cover;">
-                            @else
-                                <img src="{{ asset('images/hero-sekolah.jpg') }}" 
-                                     alt="{{ $item->judul }}" 
-                                     class="w-100 h-100" 
-                                     style="object-fit: cover;">
-                            @endif
-                        </div>
-                        
-                        <!-- Body Card -->
-                        <div class="card-body p-0 d-flex flex-column">
-                            <h5 class="fw-bold text-dark mb-2">{{ $item->judul }}</h5>
+            <!-- Grid Cards -->
+            <div class="row g-4 justify-content-center">
+                
+                @forelse ($beritas as $item)
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 p-3 bg-white news-card">
                             
-                            <p class="text-muted small mb-3 flex-grow-1" style="line-height: 1.6;">
-                                {{ Str::limit(strip_tags($item->isi ?? $item->ringkasan ?? $item->deskripsi), 120) }}
-                            </p>
+                            <!-- Area Gambar Berita -->
+                            <div class="overflow-hidden rounded-3 mb-3" style="height: 200px;">
+                                @php
+                                    // Pengecekan field gambar/foto dari database
+                                    $fotoPath = $item->foto ?? $item->gambar ?? $item->image ?? null;
+                                @endphp
 
-                            <span class="text-secondary small mb-3" style="font-size: 0.8rem;">
-                                <i class="bi bi-calendar3 me-1"></i> {{ $item->created_at->format('d F Y') }}
-                            </span>
-
-                            <div>
-                                <a href="{{ url('/berita/' . ($item->slug ?? $item->id)) }}" class="text-primary text-decoration-none fw-semibold d-inline-flex align-items-center gap-2">
-                                    Baca selengkapnya <i class="bi bi-arrow-right"></i>
-                                </a>
+                                @if($fotoPath)
+                                    <img src="{{ asset('storage/' . $fotoPath) }}" 
+                                         alt="{{ $item->judul }}" 
+                                         class="w-100 h-100" 
+                                         style="object-fit: cover;">
+                                @else
+                                    <img src="{{ asset('images/hero-sekolah.jpg') }}" 
+                                         alt="{{ $item->judul }}" 
+                                         class="w-100 h-100" 
+                                         style="object-fit: cover;">
+                                @endif
                             </div>
+                            
+                            <!-- Body Card -->
+                            <div class="card-body p-0 d-flex flex-column">
+                                <h5 class="fw-bold text-dark mb-2">{{ $item->judul }}</h5>
+                                
+                                <p class="text-muted small mb-3 flex-grow-1" style="line-height: 1.6;">
+                                    {{ Str::limit(strip_tags($item->isi ?? $item->ringkasan ?? $item->deskripsi), 120) }}
+                                </p>
+
+                                <span class="text-secondary small mb-3" style="font-size: 0.8rem;">
+                                    <i class="bi bi-calendar3 me-1"></i> {{ $item->created_at->format('d F Y') }}
+                                </span>
+
+                                <div>
+                                    <a href="{{ url('/berita/' . ($item->slug ?? $item->id)) }}" class="text-primary text-decoration-none fw-semibold d-inline-flex align-items-center gap-2">
+                                        Baca selengkapnya <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
-
                     </div>
-                </div>
-            @empty
-                <!-- Tampilan Jika Belum Ada Berita di Database -->
-                <div class="col-12 text-center py-5 text-muted">
-                    <i class="bi bi-newspaper fs-1 d-block mb-2 text-secondary"></i>
-                    <p class="mb-0">Belum ada berita terbaru yang diunggah.</p>
-                </div>
-            @endforelse
+                @empty
+                    <!-- Tampilan Jika Belum Ada Berita di Database -->
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="bi bi-newspaper fs-1 d-block mb-2 text-secondary"></i>
+                        <p class="mb-0 fw-semibold">Belum ada berita terbaru yang diunggah.</p>
+                    </div>
+                @endforelse
 
-        </div> <!-- End Row -->
-    </div>
-</section>
+            </div> <!-- End Row -->
+        </div>
+    </section>
 
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white pt-5 pb-4 mt-3">
+    <!-- Footer (Otomatis terkunci rapat di batas paling bawah) -->
+    <footer class="bg-dark text-white pt-5 pb-4 mt-auto">
         <div class="container text-center text-md-start">
             <div class="row g-4">
 
@@ -177,7 +191,7 @@
                 <div class="col-lg-2 col-md-6">
                     <h6 class="fw-bold text-uppercase mb-3 text-primary">Navigasi</h6>
                     <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
-                        <li><a href="#Beranda" class="text-secondary text-decoration-none">Beranda</a></li>
+                        <li><a href="{{ url('/') }}#Beranda" class="text-secondary text-decoration-none">Beranda</a></li>
                         <li><a href="#tentang" class="text-secondary text-decoration-none">Tentang Sekolah</a></li>
                         <li><a href="#Berita" class="text-secondary text-decoration-none">Berita Sekolah</a></li>
                         <li><a href="#jurusan" class="text-secondary text-decoration-none">Program Keahlian</a></li>

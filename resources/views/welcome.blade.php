@@ -65,7 +65,7 @@
             <div class="ms-auto">
                 @if (Route::has('login'))
                     @auth
-                        <a href="{{ route('dashboard') }}" class="btn btn-purple border-0 fw-semibold">
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-purple border-0 fw-semibold">
                             <i class="bi bi-speedometer2 me-1"></i> Dashboard
                         </a>
                     @else
@@ -81,7 +81,7 @@
 </nav>
 
         <!-- Teks Hero Tengah -->
-        <div class="container my-auto pt-5 text-center" style="transform: translateY(10px);">
+        <div class="container my-auto pt-5 text-center" style="transform: translateY(5px);">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <p class="fs-3 fw-light mb-2 text-white">Selamat Datang di Website</p>
@@ -335,44 +335,80 @@
     </section>
 
     <!-- Section Galeri Sekolah -->
-    <section id="galeri" class="py-5 bg-white">
-        <div class="container py-4">
+<section id="galeri" class="py-5 bg-white">
+    <div class="container py-4">
+        
+        <!-- Judul Section -->
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-uppercase" style="font-family: 'Google Sans', sans-serif; font-weight: 500; color: #1e1b4b;">GALERI SEKOLAH</h2>
+            <p style="font-family: 'Google Sans', sans-serif; font-weight: 300;">
+                Dokumentasi kegiatan, fasilitas, dan momen berharga di lingkungan SMK Negeri 4 Kota Bogor.
+            </p>
+        </div>
+
+        <!-- Grid Galeri (3 Kolom) -->
+        <div class="row g-4 justify-content-center">
             
-            <!-- Judul Section -->
-            <div class="text-center mb-5">
-                <h2 class="fw-bold text-uppercase" style="letter-spacing: 1px; color: #1e1b4b;">GALERI SEKOLAH</h2>
-                <p style="font-family: 'Google Sans', sans-serif; font-weight: 300;">
-                    Dokumentasi kegiatan, fasilitas, dan momen berharga di lingkungan SMK Negeri 4 Kota Bogor.
-                </p>
-            </div>
+            @forelse ($galeris as $item)
+                <div class="col-lg-4 col-md-6">
+                    <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="height: 260px;">
+                        
+                        @php
+                            // Ambil foto & teks dari database
+                            $fotoPath = $item->foto ?? $item->gambar ?? $item->image ?? null;
+                            $namaFoto = $item->judul ?? $item->nama ?? $item->keterangan ?? 'Kegiatan Sekolah';
+                        @endphp
 
-            <!-- Grid Galeri (3 Kolom) -->
-            <div class="row g-4">
-                
-                @forelse ($galeri ?? range(1, 3) as $item)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="height: 250px;">
-                            <img src="{{ isset($item->foto) ? asset('storage/' . $item->foto) : asset('images/hero-sekolah.jpg') }}" alt="{{ $item->judul ?? 'Galeri Sekolah' }}" class="w-100 h-100 object-fit-cover">
-                            <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                                <h5 class="text-white fw-bold mb-0">{{ $item->judul ?? 'Dokumentasi Sekolah' }}</h5>
-                            </div>
-                        </div>
+                        <!-- Gambar Galeri -->
+                        @if($fotoPath)
+                            <img src="{{ asset('storage/' . $fotoPath) }}" 
+                                 alt="{{ $namaFoto }}" 
+                                 class="w-100 h-100 object-fit-cover">
+                        @else
+                            <img src="{{ asset('images/hero-sekolah.jpg') }}" 
+                                 alt="{{ $namaFoto }}" 
+                                 class="w-100 h-100 object-fit-cover">
+                        @endif
+
+                        <!-- Nama/Judul Foto Overlap di Atas Gambar -->
+<div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex flex-column justify-content-end" 
+     style="background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%); height: 60%;">
+    
+    <!-- Ambil nama_tempat dari database -->
+    <h5 class="text-white fw-bold mb-1 fs-6 text-truncate" title="{{ $item->nama_tempat ?? $item->judul }}">
+        {{ $item->nama_tempat ?? $item->judul ?? 'Dokumentasi Sekolah' }}
+    </h5>
+
+    @if(isset($item->created_at))
+        <span class="text-white-50 small" style="font-size: 0.75rem;">
+            <i class="bi bi-calendar3 me-1"></i> {{ $item->created_at->format('d M Y') }}
+        </span>
+    @endif
+</div>
+
                     </div>
-                @empty
-                    <div class="col-12 text-center text-muted">Belum ada foto galeri.</div>
-                @endforelse
+                </div>
+            @empty
+                <!-- Tampilan Jika Belum Ada Foto -->
+                <div class="col-12 text-center py-5 text-muted">
+                    <i class="bi bi-images fs-1 d-block mb-2 text-secondary"></i>
+                    <p class="mb-0">Belum ada foto galeri yang diunggah.</p>
+                </div>
+            @endforelse
 
-            </div> <!-- End Row -->
+        </div> <!-- End Row -->
 
-            <!-- Tombol Lihat Selengkapnya -->
+        <!-- Tombol Lihat Selengkapnya -->
+        @if(isset($galeris) && $galeris->isNotEmpty())
             <div class="text-center mt-5">
                 <a href="{{ url('/galeri') }}" class="btn btn-purple btn-lg fw-semibold px-4 py-2 shadow-sm">
                     Lihat Selengkapnya <i class="bi bi-chevron-right ms-1"></i>
                 </a>
             </div>
+        @endif
 
-        </div>
-    </section>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer class="bg-dark text-white pt-5 pb-4 mt-3">

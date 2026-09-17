@@ -8,17 +8,56 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     @vite(['resources/css/app.css'])
-</head>
-<body class="bg-light">
 
-    <!-- Navbar Utama (Sesuai Komponen Kamu) -->
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        /* Galeri Card Styling */
+        .gallery-card {
+            height: 260px;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
+        }
+        .gallery-card img {
+            transition: transform 0.5s ease;
+        }
+        .gallery-card:hover img {
+            transform: scale(1.05);
+        }
+        .gallery-overlay {
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.2) 60%, rgba(0,0,0,0) 100%);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<!-- Menggunakan Flexbox Layout untuk mengunci Sticky Footer -->
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3 fixed-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="{{ url('/') }}">
@@ -30,13 +69,12 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Menu Navigasi Presisi di Tengah -->
                 <ul class="navbar-nav position-absolute start-50 translate-middle-x">
                     <li class="nav-item">
                         <a class="nav-link mx-3 {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}#Beranda">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link mx-3 {{ request()->is('berita*') ? 'active' : '' }}" href="{{ url('/') }}#Berita">Berita</a>
+                        <a class="nav-link mx-3 {{ request()->is('berita*') ? 'active' : '' }}" href="{{ url('/berita') }}">Berita</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link mx-3 {{ request()->is('jurusan*') ? 'active' : '' }}" href="{{ url('/jurusan') }}">Jurusan</a>
@@ -46,11 +84,10 @@
                     </li>
                 </ul>
 
-                <!-- Tombol Masuk Terkunci di Ujung Kanan -->
                 <div class="ms-auto">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ route('dashboard') }}" class="btn btn-purple border-0 fw-semibold">
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-purple border-0 fw-semibold">
                                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
                             </a>
                         @else
@@ -67,84 +104,42 @@
     <!-- Header Galeri -->
     <section class="pt-5 mt-5 pb-4 bg-white border-bottom">
         <div class="container pt-4 text-center">
-            <h1 class="fw-bold text-uppercase" style="letter-spacing: 1px; color: #1e1b4b;">GALERI & FASILITAS SEKOLAH</h1>
-            <p class="text-muted col-md-8 mx-auto small">
+            <h1 class="fw-bold text-uppercase" style="letter-spacing: -0.5px; color: #0f172a;">GALERI & FASILITAS SEKOLAH</h1>
+            <p class="text-muted col-md-8 mx-auto small mb-0">
                 Kumpulan dokumentasi kegiatan, fasilitas pembelajaran, serta momen-momen penting di lingkungan SMK Negeri 4 Kota Bogor.
             </p>
         </div>
     </section>
 
-    <!-- Grid Foto Galeri Penuh -->
-    <section class="py-5">
+    <!-- Grid Foto Galeri Penuh (flex-grow-1 memaksa area konten mendorong footer ke bawah) -->
+    <section class="py-5 flex-grow-1">
         <div class="container">
             <div class="row g-4">
                 
-                <!-- Item Galeri 1 -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="position-relative overflow-hidden rounded-4 shadow-sm bg-white" style="height: 250px;">
-                        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="Taman Sekolah" class="w-100 h-100 object-fit-cover">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                            <h5 class="text-white fw-bold mb-0">Taman Sekolah</h5>
+                @forelse($galeris ?? $galeri ?? [] as $g)
+                    <!-- Item Galeri Dinamis -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="gallery-card">
+                            <img src="{{ asset('storage/' . $g->foto) }}" alt="{{ $g->nama_tempat }}" class="w-100 h-100 object-fit-cover">
+                            <div class="gallery-overlay">
+                                <h5 class="text-white fw-bold mb-0 text-truncate">{{ $g->nama_tempat }}</h5>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Item Galeri 2 -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="position-relative overflow-hidden rounded-4 shadow-sm bg-white" style="height: 250px;">
-                        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="Laboratorium Komputer" class="w-100 h-100 object-fit-cover">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                            <h5 class="text-white fw-bold mb-0">Laboratorium Komputer PPLG</h5>
-                        </div>
+                @empty
+                    <!-- Tampilan Jika Belum Ada Foto -->
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-images fs-1 text-muted d-block mb-2"></i>
+                        <p class="text-muted fw-semibold">Belum ada galeri foto yang diunggah.</p>
                     </div>
-                </div>
-
-                <!-- Item Galeri 3 -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="position-relative overflow-hidden rounded-4 shadow-sm bg-white" style="height: 250px;">
-                        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="Bengkel Otomotif" class="w-100 h-100 object-fit-cover">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                            <h5 class="text-white fw-bold mb-0">Bengkel Teknik Otomotif</h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item Galeri 4 -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="position-relative overflow-hidden rounded-4 shadow-sm bg-white" style="height: 250px;">
-                        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="Lapangan Olahraga" class="w-100 h-100 object-fit-cover">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                            <h5 class="text-white fw-bold mb-0">Lapangan Olahraga</h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item Galeri 5 -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="position-relative overflow-hidden rounded-4 shadow-sm bg-white" style="height: 250px;">
-                        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="Perpustakaan" class="w-100 h-100 object-fit-cover">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                            <h5 class="text-white fw-bold mb-0">Perpustakaan Digital</h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item Galeri 6 -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="position-relative overflow-hidden rounded-4 shadow-sm bg-white" style="height: 250px;">
-                        <img src="{{ asset('images/hero-sekolah.jpg') }}" alt="Ruang Ekstrakurikuler" class="w-100 h-100 object-fit-cover">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); height: 50%;">
-                            <h5 class="text-white fw-bold mb-0">Kegiatan Ekstrakurikuler</h5>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
 
             </div> <!-- End Row -->
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white pt-5 pb-4 mt-3">
+    <!-- Footer (Otomatis terkunci di paling bawah layar) -->
+    <footer class="bg-dark text-white pt-5 pb-4 mt-auto">
         <div class="container text-center text-md-start">
             <div class="row g-4">
 

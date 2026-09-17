@@ -14,7 +14,6 @@ class GaleriController extends Controller
     public function index()
     {
         $galeris = Galeri::latest()->get();
-        // Ubah dari 'admin.galeri.index' menjadi 'galeri.index'
         return view('galeri.index', compact('galeris'));
     }
 
@@ -38,12 +37,43 @@ class GaleriController extends Controller
         return redirect()->route('admin.galeri.index')->with('success', 'Foto galeri berhasil ditambahkan!');
     }
 
+    /**
+     * Update foto galeri.
+     */
+    public function update(Request $request, $id)
+    {
+        // 1. Validasi input (gunakan nama_tempat)
+        $request->validate([
+            'nama_tempat' => 'required|string|max:255',
+            'foto'        => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $galeri = Galeri::findOrFail($id);
+        
+        // 2. Update nama_tempat
+        $galeri->nama_tempat = $request->nama_tempat;
+
+        // 3. Jika ada foto baru
+        if ($request->hasFile('foto')) {
+            if ($galeri->foto && Storage::disk('public')->exists($galeri->foto)) {
+                Storage::disk('public')->delete($galeri->foto);
+            }
+
+            $path = $request->file('foto')->store('galeri', 'public');
+            $galeri->foto = $path;
+        }
+
+        $galeri->save();
+
+        return redirect()->back()->with('success', 'Data galeri berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
         $galeri = Galeri::findOrFail($id);
 
-        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($galeri->foto)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($galeri->foto);
+        if (Storage::disk('public')->exists($galeri->foto)) {
+            Storage::disk('public')->delete($galeri->foto);
         }
 
         $galeri->delete();

@@ -48,7 +48,7 @@
                 <div class="ms-auto">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ route('dashboard') }}" class="btn btn-purple border-0 fw-semibold">
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-purple border-0 fw-semibold">
                                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
                             </a>
                         @else

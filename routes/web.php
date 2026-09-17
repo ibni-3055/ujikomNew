@@ -6,23 +6,10 @@ use App\Http\Controllers\MuridController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\DashboardController; // Import Controller Dashboard
 use App\Models\Kelas;
 use App\Models\Berita;
 use App\Models\Galeri;
-
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    // === BISA DIAKSES OLEH SEMUA ADMIN & SUPER ADMIN ===
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('berita', BeritaController::class);
-    Route::resource('galeri', GaleriController::class);
-    Route::resource('kelas', KelasController::class);
-    Route::resource('murid', MuridController::class);
-
-    // === HANYA BISA DIAKSES OLEH SUPER ADMIN ===
-    Route::middleware(['super_admin'])->group(function () {
-        Route::resource('users', AdminManagementController::class); // CRUD Kelola Admin
-    });
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -62,7 +49,6 @@ Route::get('/galeri', function () {
     return view('galeri', compact('galeris'));
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | 2. RUTE ADMIN (Wajib Login)
@@ -71,24 +57,30 @@ Route::get('/galeri', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // Dashboard Admin
+    // Redirect /dashboard biasa ke /admin/dashboard
     Route::get('/dashboard', function () {
-        $totalKelas = Kelas::count();
-        $totalBerita = Berita::count();
-        $totalGaleri = Galeri::count();
-
-        return view('dashboard', compact('totalKelas', 'totalBerita', 'totalGaleri'));
-    })->name('dashboard');
+        return redirect()->route('admin.dashboard');
+    });
 
     // Group Rute Management Admin (/admin/...)
     Route::prefix('admin')->name('admin.')->group(function () {
         
-        // Rute Kelola Admin (Sekarang URL-nya jadi /admin)
+        // Dashboard Admin
+        Route::get('/dashboard', function () {
+            $totalKelas = Kelas::count();
+            $totalBerita = Berita::count();
+            $totalGaleri = Galeri::count();
+
+            return view('dashboard', compact('totalKelas', 'totalBerita', 'totalGaleri'));
+        })->name('dashboard');
+
+        // Rute Kelola Admin (Hanya Super Admin yang bisa akses via HasMiddleware di UserController)
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::put('/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
 
-        // Resource Admin Lainnya
+        // Resource Admin Lainnya (Bisa diakses Admin & Super Admin)
         Route::resource('kelas', KelasController::class);
         Route::post('kelas/{kelas_id}/murid', [MuridController::class, 'store'])->name('murid.store');
         Route::put('murid/{id}', [MuridController::class, 'update'])->name('murid.update');

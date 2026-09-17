@@ -78,8 +78,9 @@
         </div>
 
         <ul class="nav nav-pills flex-column gap-1 mb-auto">
+            <!--menu dashboard-->
             <li class="nav-item">
-                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }} d-flex align-items-center">
+                <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }} d-flex align-items-center">
                     <i class="bi bi-grid-1x2-fill"></i> Dashboard
                 </a>
             </li>
@@ -105,14 +106,37 @@
             </li>
         </ul>
 
-        <!-- Profile & Logout -->
-<div class="pt-3 border-top border-slate-800">
-    <div class="d-flex align-items-center justify-content-between px-2 bg-slate-900 p-2 rounded-3">
-        <div class="text-white small">
-            <div class="fw-bold text-truncate" style="max-width: 140px;">{{ Auth::user()->name ?? 'Administrator' }}</div>
+       <!-- Profile & Logout (Sidebar Footer) -->
+<div class="mt-auto pt-3 border-top border-secondary border-opacity-25">
+    <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-10 shadow-sm">
+        
+        <!-- Info User & Avatar -->
+        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+            <!-- Avatar Inisial Nama -->
+            <div class="rounded-circle bg-primary bg-gradient text-white d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" 
+                 style="width: 38px; height: 38px; font-size: 0.85rem;">
+                {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+            </div>
+            
+            <!-- Nama & Badge Role -->
+            <div class="d-flex flex-column text-truncate">
+                <span class="fw-bold text-white small text-truncate" title="{{ Auth::user()->name }}">
+                    {{ Auth::user()->name ?? 'Administrator' }}
+                </span>
+                <span class="badge bg-{{ Auth::user()->role === 'super_admin' ? 'warning' : 'info' }} bg-opacity-25 text-{{ Auth::user()->role === 'super_admin' ? 'warning' : 'info' }} fw-semibold p-0 px-1 border border-{{ Auth::user()->role === 'super_admin' ? 'warning' : 'info' }} border-opacity-25 rounded" 
+                      style="font-size: 0.65rem; width: fit-content;">
+                    {{ Auth::user()->role === 'super_admin' ? 'Super Admin' : 'Admin' }}
+                </span>
+            </div>
         </div>
-        <!-- Tombol pemicu modal konfirmasi -->
-        <button type="button" class="btn btn-outline-danger btn-sm border-0 rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#logoutModal" title="Keluar">
+
+        <!-- Tombol Logout -->
+        <button type="button" 
+                class="btn btn-outline-danger btn-sm border-0 rounded-3 p-2 d-flex align-items-center justify-content-center transition-all" 
+                data-bs-toggle="modal" 
+                data-bs-target="#logoutModal" 
+                title="Keluar dari Sistem"
+                style="width: 34px; height: 34px;">
             <i class="bi bi-box-arrow-right fs-6"></i>
         </button>
     </div>
@@ -159,8 +183,8 @@
     </main>
 
     <!-- Menu ini hanya akan muncul untuk Super Admin -->
-@if(auth()->user()->isSuperAdmin())
-    <a href="{{ route('admin.users.index') }}" class="nav-link">
+@if(auth()->user()->role === 'super_admin')
+    <a href="{{ route('admin.index') }}" class="nav-link {{ request()->routeIs('admin.index*') ? 'active' : '' }}">
         <i class="bi bi-people-fill me-2"></i> Kelola Admin
     </a>
 @endif
